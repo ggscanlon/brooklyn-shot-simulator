@@ -241,8 +241,6 @@ against **LGA or JFK**, which are instrumented for aviation and report direction
 
 ## Part 4 — Why you should take more layups
 
-*(Populated from `analysis/shot_selection.py` — see RESULTS section below.)*
-
 ### The mechanism
 
 Wind applies a roughly constant sideways acceleration `a`, so the sideways displacement it
@@ -269,6 +267,62 @@ scales with `v²` and a longer shot is thrown harder.
 
 Against this, the scoreboard pulls the other way: a three is worth 50% more. The question is
 where those two curves cross — and the answer depends on the month.
+
+### Method
+
+One shot per distance, each calibrated to go in perfectly **indoors**, then fired through 150
+real sampled hours per month. All five shots see the **same** weather hours (a paired
+comparison) so that any difference between rows is the shot, not the luck of the draw.
+
+### Catastrophe rate — missing by more than 30 cm
+
+| shot | Jan | **Mar** | Jun | Jul | Oct |
+|---|---|---|---|---|---|
+| layup | 2.0% | 0.7% | 0.0% | 0.0% | 0.0% |
+| short 2 | 9.3% | 11.3% | 2.7% | 0.0% | 5.3% |
+| mid-range | 25.3% | 40.0% | 8.0% | 2.0% | 18.7% |
+| long 2 | 40.7% | 50.0% | 11.3% | 6.0% | 24.7% |
+| three | **48.7%** | **58.0%** | 18.7% | 12.7% | 30.7% |
+
+Perfectly monotonic in distance, in every month. **In a Brooklyn March, 58% of three-point
+attempts miss by more than 30 cm — and 0.7% of layups do.** That is a factor of 80.
+
+### Expected points per shot (make % × shot value)
+
+| shot | Jan | Mar | Jul | Sep |
+|---|---|---|---|---|
+| layup | **1.79** | **1.75** | 2.00 | 1.93 |
+| short 2 | 1.17 | 0.92 | 1.87 | 1.64 |
+| mid-range | 0.85 | 0.69 | 1.63 | 1.56 |
+| long 2 | 0.84 | 0.67 | 1.52 | 1.44 |
+| three | 1.26 | 0.98 | **2.28** | **2.16** |
+
+**The optimal shot flips with the season. Layups win October through April; threes win May
+through September.** In March the layup is worth **+0.77 points per possession** over the
+three — roughly the difference between a great offense and a dreadful one.
+
+### An unplanned validation
+
+Look at the long two versus the three. In January both make **42.0%** — identical, because at
+those distances the flight times are close. But the three is worth 50% more, and the long two
+actually carries a *lower* catastrophe rate only because it is marginally shorter.
+
+**The long two is strictly dominated by the three, in every month.** Same accuracy, less
+reward.
+
+Nobody put that in the model. It falls out of drag, Magnus and a scoreboard — and it is
+exactly the conclusion the NBA analytics community reached from tracking data over the past
+fifteen years, the one that emptied the mid-range out of professional basketball. A physics
+simulator that reproduces a known empirical result it was never told about is a simulator
+worth some trust.
+
+### What this means for a shooter
+
+- **The reward for backing up grows linearly. The risk grows with the square of flight time.**
+  That asymmetry is the whole argument.
+- Cold months are dense *and* windy, and both effects push the same way, so winter punishes
+  distance twice over.
+- The right response to bad weather is not to shoot harder. It is to **shoot from closer**.
 
 ---
 
@@ -301,6 +355,15 @@ where those two curves cross — and the answer depends on the month.
 9. **Test the sign, not just the magnitude.** The Magnus cross product is the most likely bug
    in the project, and a wrong sign produces a trajectory that still looks like a basketball
    shot. Only an explicit test catches it.
+
+### On the result
+10. **The optimal shot distance depends on the weather.** Layups win October–April, threes win
+    May–September. The reward for backing up grows linearly with distance; the risk grows with
+    the square of flight time.
+11. **The model reproduced a result nobody put into it** — that the long two is strictly
+    dominated by the three. That is the real conclusion the NBA analytics community reached
+    from a decade of tracking data, and it fell out of drag, Magnus and a scoreboard. It is
+    the strongest evidence so far that the simulator is behaving.
 
 ### Still open
 - Separating temperature from wind. The seasonal swing confounds them — colder months are both
