@@ -100,7 +100,7 @@ sat near a distribution tail without saying so — once real data arrived, 0 C p
 the 20th percentile of January, 30 C about the 90th of July, and **5 m/s wind roughly a p90-p99
 hour**. Extremes on every axis, presented as typical, which inflated the wind-dominance ratio.
 
-### 5c. Monte Carlo over REAL SAMPLED HOURS (2026-09-12) — current
+### 5c. Monte Carlo over REAL SAMPLED HOURS (2026-09-12) — SUPERSEDED by 5e
 
 Method: 76,961 real Central Park hours, 2015-2024. Calibrate one shot to go in indoors
 (20 C, 40% RH, 9.538 m/s), then fire that identical shot through 400 real hours sampled per
@@ -121,15 +121,15 @@ month and record where it lands. Court faces north. Make window +/- 10.9 cm.
 | Nov | 1.210 / 1.249 / 1.283 | -52.7 / -4.3 / +1.3 | 57.0 |
 | Dec | 1.230 / 1.267 / 1.307 | -55.1 / -6.7 / +0.6 | 42.2 |
 
-**The headline: an indoor-calibrated shot makes ~72% in August and ~37% in March.** Roughly a
-two-fold swing across a NYC year, from a shooter who did nothing different. That is a far
-stronger result than either earlier version, and it is the one the game should be built around.
+**Headline as reported at the time: an indoor-calibrated shot makes ~72% in August and ~37%
+in March.** Both figures are too high — this run still treated light-and-variable wind as
+calm. See 5e for the corrected numbers.
 
 Note the p10 column. Those are the windy tail: a January hour at p10 lands the ball **80 cm
 short**. The median January miss is only -9.4 cm. Outdoor shooting is not uniformly harder —
 it is *occasionally catastrophic*, and the tail is the story.
 
-### 5d. KNOWN BIAS in 5c — must be fixed before this is quotable
+### 5d. KNOWN BIAS in 5c — DIAGNOSED AND FIXED 2026-09-13 (see 5e)
 
 Central Park reports a usable wind direction only **44%** of the time: 21.3% of hours are
 genuinely calm, but **34.7% have measurable wind with no direction recorded**. The 5c run
@@ -142,15 +142,63 @@ stepping across the calm threshold, not the weather changing. **Any median-based
 5c is therefore suspect; the make-% and percentile columns are sounder but still biased toward
 optimism.**
 
-Fix: re-run against **LGA or JFK**, which are instrumented for aviation and report direction
+Note: the fix turned out to be simpler than switching stations — see 5e. Still worth re-running against **LGA or JFK**, which are instrumented for aviation and report direction
 far more reliably. KNYC is a sheltered park site with a known-poor wind record. Until then,
 5c understates outdoor difficulty, and the true seasonal swing is probably wider than 37-72%.
 
-### 5e. Still owed
+### 5e. Corrected for variable wind (2026-09-13) — CURRENT
 
-A decomposition run separating temperature from wind. 5c confounds them — colder months are
-both denser *and* windier, and nothing above says how the 2x swing splits between the two.
-That is the actual question the project set out to answer.
+The bias named in 5d was diagnosed and fixed. A null wind direction in the ASOS feed is the
+METAR code **VRB**, not a broken sensor: the standard permits it only at 6 knots or less, and
+our data shows the cliff exactly at 7 knots (below it 53-66% of hours carry no direction, at
+and above it essentially none). Those hours have real wind of 1.5-3 m/s with no prevailing
+direction, so they are now resolved by drawing a direction **uniformly at random** and keeping
+the observed speed. Uniform is correct because "variable" means no prevailing direction —
+drawing from the observed-direction distribution would sample the wrong population.
+
+Effect: July's mean wind had been understated by **110%**, January's by 27%.
+
+**Catastrophe rate (miss > 30 cm):**
+
+| shot | Jan | Mar | Jul | Oct |
+|---|---|---|---|---|
+| layup | 2.0% | 0.7% | 0.0% | 0.0% |
+| mid-range | 26.0% | 40.0% | 2.0% | 18.7% |
+| three | **64.7%** | **67.3%** | 18.7% | 46.0% |
+
+**Expected points per shot:**
+
+| shot | Jan | Mar | Jul | Sep |
+|---|---|---|---|---|
+| layup | **1.79** | **1.75** | **2.00** | **1.93** |
+| three | 0.24 | 0.30 | 1.12 | 0.88 |
+
+**The seasonal crossover reported in 5c does not exist.** The layup wins all twelve months,
+by +0.88 points per possession in July rising to +1.55 in January. The crossover was
+manufactured by the bug: deleting variable wind flattered long shots, and flattered them most
+in summer where the variable fraction is highest.
+
+**What survived the correction:** the long two remains strictly dominated by the three in
+every month — the unplanned reproduction of the known NBA analytics result. One finding was
+robust to a data bug and one was not; that distinction is worth more than either number.
+
+**Limitation this exposes:** taken literally these tables say "always shoot layups", which is
+false about basketball. There is **no defender in the model** — every shot is uncontested, and
+in a real game the defense collapses toward the rim precisely because layups are
+high-percentage. The defensible claim is narrower: weather shifts the break-even point toward
+the rim, by far more than intuition suggests. A defensive-pressure term is the next extension.
+
+### 5f. Still owed
+
+A decomposition run separating temperature from wind. Every run so far confounds them —
+colder months are both denser *and* windier, and nothing above says how the swing splits
+between the two. That is the actual question the project set out to answer, and the variable-
+wind fix makes it more pressing, not less: wind now clearly dominates, so the temperature
+contribution needs isolating before any claim about *air density* specifically can stand.
+
+Also owed: re-running against LGA or JFK, whose wind direction reporting is far more complete
+than Central Park's 44%, which would let us validate the uniform-draw imputation against a
+station that rarely needs it.
 
 ## 6. Data
 

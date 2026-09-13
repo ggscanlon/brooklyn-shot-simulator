@@ -265,8 +265,12 @@ A three-pointer hangs in the air 2.5× as long as a layup, which means it absorb
 times** as much wind displacement. On top of that it accumulates more drag error, because drag
 scales with `v²` and a longer shot is thrown harder.
 
-Against this, the scoreboard pulls the other way: a three is worth 50% more. The question is
-where those two curves cross — and the answer depends on the month.
+Against this, the scoreboard pulls the other way: a three is worth 50% more. So the question
+is whether the extra point ever outweighs the extra risk.
+
+Measured, in New York weather and with no defender in the model, it never does — the 50%
+premium is not enough to cover a flight time 2.5× longer. The gap narrows in calm summer
+months and becomes enormous in winter, but it does not close.
 
 ### Method
 

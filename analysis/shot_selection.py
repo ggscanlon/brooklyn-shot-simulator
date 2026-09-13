@@ -10,7 +10,18 @@ wind error does not grow linearly as you back up - it grows much faster than tha
 catastrophic tail grows faster still.
 
 Against that, the scoreboard pushes the other way: a three is worth 50% more than a layup.
-This module computes both sides and finds where they cross.
+This module computes both sides and weighs them.
+
+The answer, measured: the extra point never covers the extra risk. In New York weather the
+layup wins every month of the year, by +0.88 expected points per possession in calm July and
++1.55 in January. An earlier version of this analysis reported a seasonal crossover with
+threes winning in summer - that was an artifact of treating light-and-variable wind as calm,
+which flattered long shots and flattered them most in the summer months.
+
+Caveat that matters: there is NO DEFENDER in this model. Every shot is uncontested. In a real
+game the defense collapses toward the rim precisely because layups are high-percentage, which
+is what makes a three worth attempting at all. What this measures is the WEATHER component of
+shot value, not the whole of it.
 
     python3 -m analysis.shot_selection
 """
