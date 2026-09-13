@@ -1,0 +1,14 @@
+[project]
+name = "hoops-physics"
+version = "0.1.0"
+description = "Brooklyn Shot Simulator - basketball trajectory physics"
+requires-python = ">=3.10"
+dependencies = ["numpy", "pandas", "matplotlib", "requests"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"
+
+[tool.tdd_guard_pytest]
+project_root = "/mnt/nvme_990_4tb/hoops_physics"

@@ -1,0 +1,16 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+.venv/
+venv/
+data/raw/
+plots/*.png
+.~lock.*#
+*~
+*.swp
+
+# Agent-harness transient state - not part of the project
+.claude/sessions/
+.claude/state/
+.claude/tdd-guard/data/test.json
