@@ -16,7 +16,8 @@ March.** Shot selection should change with the season — see
 
 | | |
 |---|---|
-| [`docs/WRITEUP.md`](docs/WRITEUP.md) | **Start here.** Every equation, every file, and what we learned. |
+| [`docs/GETTING_STARTED.md`](docs/GETTING_STARTED.md) | **New to GitHub or code? Start here.** Account setup through running it. |
+| [`docs/WRITEUP.md`](docs/WRITEUP.md) | Every equation, every file, and what we learned. |
 | `physics/` | The simulator. No I/O, no network — numbers in, numbers out. |
 | `data_pipeline/` | Fetches and cleans NOAA/ASOS weather observations. |
 | `analysis/` | The studies: I/O trace, shot selection. |
