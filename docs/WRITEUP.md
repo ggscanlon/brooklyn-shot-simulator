@@ -276,53 +276,70 @@ comparison) so that any difference between rows is the shot, not the luck of the
 
 ### Catastrophe rate — missing by more than 30 cm
 
-| shot | Jan | **Mar** | Jun | Jul | Oct |
-|---|---|---|---|---|---|
-| layup | 2.0% | 0.7% | 0.0% | 0.0% | 0.0% |
-| short 2 | 9.3% | 11.3% | 2.7% | 0.0% | 5.3% |
-| mid-range | 25.3% | 40.0% | 8.0% | 2.0% | 18.7% |
-| long 2 | 40.7% | 50.0% | 11.3% | 6.0% | 24.7% |
-| three | **48.7%** | **58.0%** | 18.7% | 12.7% | 30.7% |
+| shot | Jan | **Mar** | Jul | Oct |
+|---|---|---|---|---|
+| layup | 2.0% | 0.7% | 0.0% | 0.0% |
+| short 2 | 9.3% | 11.3% | 0.0% | 5.3% |
+| mid-range | 26.0% | 40.0% | 2.0% | 18.7% |
+| long 2 | 47.3% | 54.7% | 8.7% | 31.3% |
+| three | **64.7%** | **67.3%** | 18.7% | 46.0% |
 
-Perfectly monotonic in distance, in every month. **In a Brooklyn March, 58% of three-point
-attempts miss by more than 30 cm — and 0.7% of layups do.** That is a factor of 80.
+Perfectly monotonic in distance, in every month. **In a Brooklyn March, two thirds of
+three-point attempts miss by more than 30 cm, against 0.7% of layups** — a factor of a hundred.
 
 ### Expected points per shot (make % × shot value)
 
 | shot | Jan | Mar | Jul | Sep |
 |---|---|---|---|---|
-| layup | **1.79** | **1.75** | 2.00 | 1.93 |
-| short 2 | 1.17 | 0.92 | 1.87 | 1.64 |
-| mid-range | 0.85 | 0.69 | 1.63 | 1.56 |
-| long 2 | 0.84 | 0.67 | 1.52 | 1.44 |
-| three | 1.26 | 0.98 | **2.28** | **2.16** |
+| **layup** | **1.79** | **1.75** | **2.00** | **1.93** |
+| short 2 | 1.03 | 0.79 | 1.81 | 1.47 |
+| mid-range | 0.40 | 0.36 | 1.43 | 1.04 |
+| long 2 | 0.21 | 0.24 | 0.75 | 0.59 |
+| three | 0.24 | 0.30 | 1.12 | 0.88 |
 
-**The optimal shot flips with the season. Layups win October through April; threes win May
-through September.** In March the layup is worth **+0.77 points per possession** over the
-three — roughly the difference between a great offense and a dreadful one.
+**The layup wins in all twelve months** — by +0.88 points per possession in July, rising to
++1.55 in January. There is no crossover.
+
+An earlier version of this analysis reported a seasonal flip, with threes winning May through
+September. That was an artifact of the variable-wind bug (see §3): deleting light-and-variable
+wind flattered long shots badly, and flattered them most in summer, which manufactured a
+crossover that does not exist. Corrected, the ranking never changes — only the size of the gap.
 
 ### An unplanned validation
 
-Look at the long two versus the three. In January both make **42.0%** — identical, because at
-those distances the flight times are close. But the three is worth 50% more, and the long two
-actually carries a *lower* catastrophe rate only because it is marginally shorter.
+Compare the long two with the three. In July both make exactly **37.33%** — at those
+distances the flight times are close enough that accuracy is indistinguishable. But the three
+pays 50% more, so it wins on expected points in every month.
 
-**The long two is strictly dominated by the three, in every month.** Same accuracy, less
-reward.
+**The long two is strictly dominated by the three, always.** Same accuracy, less reward.
 
 Nobody put that in the model. It falls out of drag, Magnus and a scoreboard — and it is
 exactly the conclusion the NBA analytics community reached from tracking data over the past
 fifteen years, the one that emptied the mid-range out of professional basketball. A physics
 simulator that reproduces a known empirical result it was never told about is a simulator
-worth some trust.
+worth some trust. Note this finding survived the variable-wind correction unchanged, while the
+seasonal-crossover claim did not.
 
 ### What this means for a shooter
 
 - **The reward for backing up grows linearly. The risk grows with the square of flight time.**
   That asymmetry is the whole argument.
-- Cold months are dense *and* windy, and both effects push the same way, so winter punishes
-  distance twice over.
+- Cold months are dense *and* windy, and both push the same way, so winter punishes distance twice.
 - The right response to bad weather is not to shoot harder. It is to **shoot from closer**.
+
+### The limitation this result exposes
+
+Taken literally, the tables say "always shoot layups", which is obviously not how basketball
+works. That is a fact about the model, not about the sport: **there is no defender in it.**
+Every shot here is uncontested.
+
+In a real game the defense collapses toward the rim precisely *because* layups are
+high-percentage, and that is what makes the three worth attempting at all. What this analysis
+establishes is the **weather component** of shot value, which a coach would weigh against
+defensive pressure. The honest claim is not "take more layups" but "bad weather shifts the
+break-even point toward the rim, and by a lot more than anyone would guess."
+
+Adding a defensive-pressure term is the obvious next extension.
 
 ---
 
@@ -357,13 +374,17 @@ worth some trust.
    shot. Only an explicit test catches it.
 
 ### On the result
-10. **The optimal shot distance depends on the weather.** Layups win October–April, threes win
-    May–September. The reward for backing up grows linearly with distance; the risk grows with
-    the square of flight time.
+10. **The optimal shot distance depends on the weather.** With no defender in the model the
+    layup wins every month, by +0.88 points per possession in July and +1.55 in January. The
+    reward for backing up grows linearly; the risk grows with the square of flight time.
 11. **The model reproduced a result nobody put into it** — that the long two is strictly
     dominated by the three. That is the real conclusion the NBA analytics community reached
     from a decade of tracking data, and it fell out of drag, Magnus and a scoreboard. It is
     the strongest evidence so far that the simulator is behaving.
+
+12. **One bug moved a headline conclusion.** Treating light-and-variable wind as calm
+    manufactured a seasonal crossover that does not exist. The bug was in the data layer, not
+    the physics, and it survived because the data layer had no tests.
 
 ### Still open
 - Separating temperature from wind. The seasonal swing confounds them — colder months are both

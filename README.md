@@ -6,9 +6,9 @@ about it?
 A physics simulator for basketball trajectories under real New York weather, built on
 **76,961 hours** of Central Park observations (2015–2024).
 
-**Headline finding: an identical shot, calibrated indoors, makes ~72% in August and ~37% in
-March.** Shot selection should change with the season — see
-[`docs/WRITEUP.md`](docs/WRITEUP.md).
+**Headline finding: in a Brooklyn March, two thirds of three-point attempts miss by more than
+30 cm — against 0.7% of layups.** Wind error grows with the square of flight time, so backing
+up costs far more than it looks. See [`docs/WRITEUP.md`](docs/WRITEUP.md).
 
 ---
 
