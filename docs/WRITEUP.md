@@ -380,5 +380,5 @@ worth some trust.
 python3 -m data_pipeline.fetch_asos --station NYC --start 2015 --end 2024   # once, ~1 min
 python3 -m analysis.io_trace          # what every function takes and returns
 python3 -m analysis.shot_selection    # the layup analysis
-pytest                                # 25 tests
+pytest                                # 60 tests
 ```

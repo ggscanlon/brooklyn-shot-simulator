@@ -31,7 +31,7 @@ pip install numpy pandas matplotlib pytest
 python3 -m data_pipeline.fetch_asos --station NYC --start 2015 --end 2024   # once, ~1 min
 python3 -m analysis.io_trace          # every function's inputs and outputs, with real numbers
 python3 -m analysis.shot_selection    # layups vs threes, by month
-pytest                                # 25 tests
+pytest                                # 60 tests
 ```
 
 The raw weather CSVs are not committed — `fetch_asos.py` regenerates them and caches to
