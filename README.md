@@ -21,7 +21,7 @@ March.** Shot selection should change with the season — see
 | `physics/` | The simulator. No I/O, no network — numbers in, numbers out. |
 | `data_pipeline/` | Fetches and cleans NOAA/ASOS weather observations. |
 | `analysis/` | The studies: I/O trace, shot selection. |
-| `tests/` | 25 tests on the physics core. |
+| `tests/` | 60 tests — physics core and weather pipeline. |
 
 ## Running it
 
