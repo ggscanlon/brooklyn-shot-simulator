@@ -1,53 +1,26 @@
-Indoor reference: 20.0 C, 40.0% RH -> rho = 1.1999
-Make window +/- 10.9 cm    catastrophe > 30 cm
+*** THESE NUMBERS ARE WITHDRAWN - DO NOT USE ***
 
-shot          dist m  angle  speed m/s  flight s
-------------------------------------------------
-layup           1.50   58.0     5.4440     0.542
-short 2         3.00   55.0     6.5955     0.847
-mid-range       4.50   52.0     7.7072     1.033
-long 2          6.00   50.0     8.7222     1.188
-three           7.24   50.0     9.5377     1.335
+Generated before the variable-wind (METAR VRB) fix, and wrong.
 
-MAKE % by month
-shot           Jan   Feb   Mar   Apr   May   Jun   Jul   Aug   Sep   Oct   Nov   Dec
-------------------------------------------------------------------------------------
-layup        89.33 86.00 87.33 90.00 98.00 98.00100.00 99.33 96.67 96.00 91.33 88.67
-short 2      58.67 58.67 46.00 68.00 80.67 86.00 93.33 88.67 82.00 74.00 73.33 61.33
-mid-range    42.67 47.33 34.67 56.67 69.33 76.00 81.33 82.00 78.00 64.00 60.67 46.00
-long 2       42.00 42.67 33.33 54.00 66.00 68.00 76.00 74.00 72.00 59.33 56.00 44.67
-three        42.00 42.00 32.67 52.00 66.00 68.00 76.00 74.00 72.00 58.67 56.00 44.00
+That run treated every hour with a null wind direction as CALM. A null direction is not
+calm - it is the code VRB, meaning the wind was light and variable, which the standard
+only permits at 6 knots or less. Roughly 35% of Central Park hours carry it. Treating
+them as calm deleted real wind of 1.5-3 m/s from a third of the record.
 
-CATASTROPHE % (miss > 30 cm) by month
-shot           Jan   Feb   Mar   Apr   May   Jun   Jul   Aug   Sep   Oct   Nov   Dec
-------------------------------------------------------------------------------------
-layup         2.00  2.00  0.67  0.67  0.00  0.00  0.00  0.00  0.00  0.00  0.67  2.00
-short 2       9.33 14.00 11.33  8.67  2.67  2.67  0.00  1.33  3.33  5.33  6.67  8.00
-mid-range    25.33 29.33 40.00 19.33  9.33  8.00  2.00  5.33 12.67 18.67 16.00 22.67
-long 2       40.67 38.00 50.00 32.00 13.33 11.33  6.00 10.00 16.67 24.67 25.33 35.33
-three        48.67 49.33 58.00 39.33 26.67 18.67 12.67 14.67 19.33 30.67 31.33 46.67
+Because wind error grows with the square of flight time, deleting that wind flattered long
+shots enormously and left short ones almost untouched. Measured, for January:
 
-EXPECTED POINTS PER SHOT (make% x shot value)
-shot           Jan   Feb   Mar   Apr   May   Jun   Jul   Aug   Sep   Oct   Nov   Dec
-------------------------------------------------------------------------------------
-layup         1.79  1.72  1.75  1.80  1.96  1.96  2.00  1.99  1.93  1.92  1.83  1.77
-short 2       1.17  1.17  0.92  1.36  1.61  1.72  1.87  1.77  1.64  1.48  1.47  1.23
-mid-range     0.85  0.95  0.69  1.13  1.39  1.52  1.63  1.64  1.56  1.28  1.21  0.92
-long 2        0.84  0.85  0.67  1.08  1.32  1.36  1.52  1.48  1.44  1.19  1.12  0.89
-three         1.26  1.26  0.98  1.56  1.98  2.04  2.28  2.22  2.16  1.76  1.68  1.32
+    shot        make% WITHDRAWN -> CORRECTED    catastrophe% WITHDRAWN -> CORRECTED
+    layup           89.33 -> 89.33 (no change)        2.00 -> 2.00
+    short 2         58.67 -> 51.33                    9.33 -> 9.33
+    mid-range       42.67 -> 20.00                   25.33 -> 26.00
+    long 2          42.00 -> 10.67                   40.67 -> 47.33
+    three           42.00 ->  8.00                   48.67 -> 64.67
 
-BEST SHOT BY EXPECTED POINTS, month by month
-month   best          exp pts  vs three
-----------------------------------------
-Jan     layup           1.787    +0.527
-Feb     layup           1.720    +0.460
-Mar     layup           1.747    +0.767
-Apr     layup           1.800    +0.240
-May     three           1.980    +0.000
-Jun     three           2.040    +0.000
-Jul     three           2.280    +0.000
-Aug     three           2.220    +0.000
-Sep     three           2.160    +0.000
-Oct     layup           1.920    +0.160
-Nov     layup           1.827    +0.147
-Dec     layup           1.773    +0.453
+The three-pointer was overstated by a factor of five. The layup figure was exactly right,
+because a 0.54 second flight gives wind almost no time to act - which is the finding itself.
+
+The corrected full run is regenerating (~25 min; it is slower precisely because far more
+shots now fall short). Until it lands, cite nothing from this file.
+
+Regenerate with:  python3 -m analysis.shot_selection
