@@ -17,6 +17,7 @@ This module computes both sides and finds where they cross.
 from __future__ import annotations
 
 import math
+import random
 from collections import defaultdict
 
 import numpy as np
@@ -105,24 +106,32 @@ def main():
     # three were judged on different weather, and the difference between them would carry the
     # sampling noise of two draws instead of none. Pairing removes that entirely: any gap
     # between two rows below is the shot, not the luck of the draw.
-    weather_by_month = {
-        month: [sampler.sample(month) for _ in range(SAMPLES_PER_MONTH)]
-        for month in range(1, 13)
-    }
+    #
+    # Variable-direction hours are resolved HERE, once, and the resolved vector is stored.
+    # Resolving inside the shot loop would draw a different direction for each shot and
+    # destroy the pairing we just went to the trouble of establishing.
+    wind_rng = random.Random(20260913)
+    weather_by_month = {}
+    for month in range(1, 13):
+        hours = []
+        for _ in range(SAMPLES_PER_MONTH):
+            observation = sampler.sample(month)
+            hours.append((
+                air_density(
+                    observation.temp_c, observation.pressure_pa,
+                    observation.relative_humidity_pct,
+                ),
+                observation.wind_vector(0.0, rng=wind_rng),
+            ))
+        weather_by_month[month] = hours
 
     results = defaultdict(dict)
     for name, distance, angle, points in SHOTS:
         speed = calibrated[name]
         for month in range(1, 13):
             misses = []
-            for observation in weather_by_month[month]:
-                rho = air_density(
-                    observation.temp_c, observation.pressure_pa,
-                    observation.relative_humidity_pct,
-                )
-                range_err, lateral, _ = landing_error(
-                    speed, angle, distance, rho, observation.wind_vector(0.0)
-                )
+            for rho, wind in weather_by_month[month]:
+                range_err, lateral, _ = landing_error(speed, angle, distance, rho, wind)
                 if range_err is None:
                     misses.append(float("inf"))     # never reached the rim - a total miss
                     continue

@@ -58,11 +58,27 @@ class Observation:
     wind_speed_ms: float
     wind_from_deg: Optional[float]   # None when calm - direction is meaningless at 0 speed
 
-    def wind_vector(self, court_bearing_deg: float = 0.0):
+    @property
+    def wind_is_variable(self) -> bool:
+        """
+        True when the wind was blowing but had no single reported direction.
+
+        This is NOT a broken sensor. It is the METAR code VRB, which the standard permits
+        ONLY at wind speeds of 6 knots or less, and which the Mesonet feed renders as a null
+        direction. The evidence in our own data is unambiguous: below 7 knots, 53-66% of
+        hours carry no direction; at 7 knots and above, essentially none do. That cliff sits
+        exactly on the threshold the standard defines.
+
+        So a null direction carries real information - "the wind was light and kept shifting"
+        - and it must not be confused with calm.
+        """
+        return self.wind_from_deg is None and self.wind_speed_ms > 0.0
+
+    def wind_vector(self, court_bearing_deg: float = 0.0, rng=None):
         """
         Convert to a (downcourt, cross-court, vertical) wind vector for the simulator.
 
-        Two traps live in this conversion and both are silent if you get them wrong:
+        Three traps live in this conversion and every one of them is silent:
 
         1. METAR reports the direction wind blows FROM, not toward. A "270" wind is a
            westerly, and it pushes the ball toward the EAST. Forgetting the 180-degree flip
@@ -71,14 +87,36 @@ class Observation:
         2. Compass bearings run clockwise from north; mathematical angles run anticlockwise
            from east. They are not the same coordinate system.
 
+        3. A VARIABLE-direction hour (see `wind_is_variable`) still has real wind in it -
+           typically 1.5 to 3 m/s, which is easily enough to move a three-pointer by tens of
+           centimetres. Treating it as calm silently deletes that wind, and because the
+           variable fraction is seasonal (higher in the calm summer), deleting it biases the
+           comparison between months.
+
+        Pass `rng` (a random.Random) to resolve a variable hour by drawing a direction
+        UNIFORMLY at random. Uniform is the right choice precisely because "variable" means
+        the wind had no prevailing direction during that hour - so drawing from the observed
+        direction distribution would be wrong twice over: those observations are the hours
+        that DID have a prevailing direction, and at light speeds they are a different
+        population entirely.
+
+        Without `rng`, a variable hour returns zero wind and is therefore understated. That
+        default is deliberate and documented rather than silent.
+
         `court_bearing_deg` is the compass direction the shooter faces. Rotating into court
         coordinates is what makes one Brooklyn court play differently from another.
         """
-        if self.wind_from_deg is None or self.wind_speed_ms <= 0.0:
-            return (0.0, 0.0, 0.0)
+        if self.wind_speed_ms <= 0.0:
+            return (0.0, 0.0, 0.0)          # genuinely calm
+
+        from_deg = self.wind_from_deg
+        if from_deg is None:
+            if rng is None:
+                return (0.0, 0.0, 0.0)      # understated, by documented default
+            from_deg = rng.uniform(0.0, 360.0)
 
         # Direction the air is travelling toward, relative to the way the shooter faces.
-        toward = math.radians((self.wind_from_deg + 180.0) - court_bearing_deg)
+        toward = math.radians((from_deg + 180.0) - court_bearing_deg)
         downcourt = self.wind_speed_ms * math.cos(toward)   # +ve = tailwind
         cross = -self.wind_speed_ms * math.sin(toward)      # +ve = pushes to shooter's left
         return (downcourt, cross, 0.0)
