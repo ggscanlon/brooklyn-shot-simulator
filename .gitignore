@@ -14,3 +14,6 @@ plots/*.png
 .claude/sessions/
 .claude/state/
 .claude/tdd-guard/data/test.json
+
+# Working task list - kept local, not published
+TASKS.md
